@@ -6,6 +6,7 @@ import io
 import os
 import json
 import uuid
+from html import escape
 import qrcode
 import requests
 
@@ -66,9 +67,7 @@ PHOTO_BUCKET = "tpl-photos"
 # This update adds a separate notifications table only; it does not
 # replace or migrate existing job records.
 
-PUBLIC_DOMAIN = (
-    "https://tpl-fabrication-app-evtpzepaiqfnt5gkqh8brx.streamlit.app"
-)
+PUBLIC_DOMAIN = "https://tpl-fabrication-app-evtpzepaiqfnt5gkqh8brx.streamlit.app"
 
 
 # ==========================================================
@@ -749,162 +748,83 @@ if verify_id:
             == clean_id
         ]
 
-    st.markdown(
+    st.html(
         """
         <style>
-        #MainMenu,
-        footer,
-        header,
-        .stDeployButton,
-        [data-testid="stToolbar"],
-        [data-testid="stDecoration"] {
+        #MainMenu, footer, header, .stDeployButton,
+        [data-testid="stToolbar"], [data-testid="stDecoration"] {
             display:none !important;
         }
-
         .block-container {
             padding-top:1rem !important;
             padding-bottom:2rem !important;
             max-width:680px !important;
         }
-
         body {
             background-color:#f8fafc;
         }
         </style>
-        """,
-        unsafe_allow_html=True
+        """
     )
 
     if matched:
 
         job = matched[0]
 
-        st.markdown(
-            f"""
-            <div style="
-                background-color:#003366;
-                color:white;
-                padding:22px 14px;
-                border-radius:12px;
-                text-align:center;
-            ">
-
-                <h2 style="
-                    margin:0;
-                    color:white;
-                    letter-spacing:1.2px;
-                    font-size:21px;
-                    font-weight:800;
-                ">
+        st.html(
+            """
+            <div style="background:#003366;color:white;padding:22px 14px;
+                        border-radius:12px;text-align:center;">
+                <h2 style="margin:0;color:white;letter-spacing:1.2px;
+                           font-size:21px;font-weight:800;">
                     TRADE PROMOTERS LIMITED
                 </h2>
-
-                <p style="
-                    margin:5px 0 0 0;
-                    font-size:11px;
-                    color:#93c5fd;
-                    letter-spacing:.8px;
-                    text-transform:uppercase;
-                ">
+                <p style="margin:5px 0 0 0;font-size:11px;color:#93c5fd;
+                          letter-spacing:.8px;text-transform:uppercase;">
                     GENERATOR FABRICATION QA/QC CLEARANCE CERTIFICATE
                 </p>
-
                 <div style="margin-top:12px;">
-
-                    <span style="
-                        background:#16a34a;
-                        color:white;
-                        padding:5px 16px;
-                        border-radius:20px;
-                        font-weight:bold;
-                        font-size:12px;
-                        display:inline-block;
-                    ">
+                    <span style="background:#16a34a;color:white;padding:5px 16px;
+                                 border-radius:20px;font-weight:bold;font-size:12px;
+                                 display:inline-block;">
                         ✓ QUALITY VERIFIED &amp; COMPLETED
                     </span>
-
                 </div>
-
             </div>
-            """,
-            unsafe_allow_html=True
+            """
         )
 
         st.write("")
 
-        st.markdown(
+        job_id_html = escape(str(job.get("job_id", "N/A")))
+        worker_html = escape(str(job.get("worker", "N/A")))
+        start_html = escape(str(job.get("start_time", "N/A")))
+        completed_html = escape(str(job.get("completed_time", "N/A")))
+
+        st.html(
             f"""
-            <div style="
-                background:white;
-                border-radius:10px;
-                padding:14px;
-                border:1px solid #e2e8f0;
-                margin-bottom:15px;
-            ">
-
-                <table style="
-                    width:100%;
-                    font-size:13px;
-                    line-height:1.8;
-                ">
-
+            <div style="background:white;border-radius:10px;padding:14px;
+                        border:1px solid #e2e8f0;margin-bottom:15px;">
+                <table style="width:100%;font-size:13px;line-height:1.8;">
                     <tr>
-                        <td style="
-                            color:#64748b;
-                            width:45%;
-                        ">
-                            Job ID:
-                        </td>
-
-                        <td style="
-                            font-weight:bold;
-                            color:#0f172a;
-                        ">
-                            {job.get('job_id','N/A')}
-                        </td>
+                        <td style="color:#64748b;width:45%;">Job ID:</td>
+                        <td style="font-weight:bold;color:#0f172a;">{job_id_html}</td>
                     </tr>
-
                     <tr>
-                        <td style="color:#64748b;">
-                            Fabrication Lead:
-                        </td>
-
-                        <td style="
-                            font-weight:bold;
-                            color:#0f172a;
-                        ">
-                            {job.get('worker','N/A')}
-                        </td>
+                        <td style="color:#64748b;">Fabrication Lead:</td>
+                        <td style="font-weight:bold;color:#0f172a;">{worker_html}</td>
                     </tr>
-
                     <tr>
-                        <td style="color:#64748b;">
-                            Started Date/Time:
-                        </td>
-
-                        <td>
-                            {job.get('start_time','N/A')}
-                        </td>
+                        <td style="color:#64748b;">Started Date/Time:</td>
+                        <td>{start_html}</td>
                     </tr>
-
                     <tr>
-                        <td style="color:#64748b;">
-                            Completed Date/Time:
-                        </td>
-
-                        <td style="
-                            color:#16a34a;
-                            font-weight:bold;
-                        ">
-                            {job.get('completed_time','N/A')}
-                        </td>
+                        <td style="color:#64748b;">Completed Date/Time:</td>
+                        <td style="color:#16a34a;font-weight:bold;">{completed_html}</td>
                     </tr>
-
                 </table>
-
             </div>
-            """,
-            unsafe_allow_html=True
+            """
         )
 
         st.markdown(
@@ -1005,20 +925,14 @@ if verify_id:
                 use_container_width=True
             )
 
-        st.markdown(
+        st.html(
             """
-            <div style="
-                text-align:center;
-                font-size:11px;
-                color:#64748b;
-                margin-top:25px;
-                border-top:1px solid #cbd5e1;
-                padding-top:12px;
-            ">
-                Trade Promoters Limited • Generator Installation & QA/QC Division
+            <div style="text-align:center;font-size:11px;color:#64748b;
+                        margin-top:25px;border-top:1px solid #cbd5e1;
+                        padding-top:12px;">
+                Trade Promoters Limited • Generator Installation &amp; QA/QC Division
             </div>
-            """,
-            unsafe_allow_html=True
+            """
         )
 
         st.write("---")
@@ -2741,5 +2655,462 @@ else:
 
                                 st.success(
                                     f"Job "
-                                    f"{job.get('job_id')} ")
-                                   
+                                    f"{job.get('job_id')} "
+                                    "COMPLETED successfully!"
+                                )
+
+                                st.rerun()
+
+                        else:
+
+                            st.warning(
+                                "Please tick the "
+                                "completion checkbox "
+                                "above before submitting."
+                            )
+
+
+                # ==================================================
+                # DELETE ACTIVE JOB
+                # ==================================================
+
+                st.write("---")
+
+                act_del_key = (
+                    f"active_{record_id}"
+                )
+
+                if (
+                    st.session_state.delete_confirm_id
+                    == act_del_key
+                ):
+
+                    st.error(
+                        f"⚠️ Are you sure you want "
+                        f"to delete ongoing job "
+                        f"**{job.get('job_id')}**?"
+                    )
+
+                    conf_c1, conf_c2 = st.columns(
+                        2
+                    )
+
+                    with conf_c1:
+
+                        if st.button(
+                            "Yes, Delete Job",
+                            key=f"act_yes_{record_id}"
+                        ):
+
+                            # Delete photos
+                            for r in job.get(
+                                "rectifications",
+                                []
+                            ):
+
+                                for p in (
+                                    normalize_photo_list(
+                                        r.get("photos", [])
+                                    )
+                                    +
+                                    normalize_photo_list(
+                                        r.get(
+                                            "fixed_photos",
+                                            []
+                                        )
+                                    )
+                                ):
+
+                                    delete_photo_url(p)
+
+
+                            for p in normalize_photo_list(
+                                job.get(
+                                    "qc_final_approval_photos",
+                                    []
+                                )
+                            ):
+
+                                delete_photo_url(p)
+
+
+                            if delete_job_record(
+                                record_id
+                            ):
+
+                                st.session_state.jobs_db = [
+                                    j
+                                    for j
+                                    in st.session_state.jobs_db
+                                    if j.get(
+                                        "record_id"
+                                    )
+                                    != record_id
+                                ]
+
+                                st.session_state.delete_confirm_id = (
+                                    None
+                                )
+
+                                st.success(
+                                    f"Job "
+                                    f"{job.get('job_id')} "
+                                    "permanently deleted!"
+                                )
+
+                                st.rerun()
+
+
+                    with conf_c2:
+
+                        if st.button(
+                            "No, Cancel",
+                            key=f"act_no_{record_id}"
+                        ):
+
+                            st.session_state.delete_confirm_id = (
+                                None
+                            )
+
+                            st.rerun()
+
+                else:
+
+                    if st.button(
+                        f"🗑️ Delete This Job "
+                        f"({job.get('job_id')})",
+
+                        key=(
+                            f"act_del_btn_"
+                            f"{record_id}"
+                        )
+                    ):
+
+                        st.session_state.delete_confirm_id = (
+                            act_del_key
+                        )
+
+                        st.rerun()
+
+
+# ==========================================================
+# 3. COMPLETED JOBS
+# All roles can view/download QR and certificate documents.
+# ==========================================================
+
+st.write("---")
+
+st.subheader(
+    "3. Completed Jobs Archive"
+)
+
+
+completed_jobs = [
+    j
+    for j in st.session_state.jobs_db
+    if j.get("status")
+    == "Completed"
+]
+
+
+if not completed_jobs:
+
+    st.caption(
+        "No completed jobs yet."
+    )
+
+else:
+
+    for c_idx, c_job in enumerate(
+        completed_jobs
+    ):
+
+        migrate_job(c_job)
+
+        record_id = c_job[
+            "record_id"
+        ]
+
+        c_rects = c_job.get(
+            "rectifications",
+            []
+        )
+
+        with st.expander(
+            f"🟢 "
+            f"{c_job.get('job_id','')} - "
+            f"{c_job.get('worker','')} "
+            f"(COMPLETED)"
+        ):
+
+            st.write(
+                f"**Description:** "
+                f"{c_job.get('desc','')}"
+            )
+
+            st.write(
+                f"**Completed At:** "
+                f"{c_job.get('completed_time','N/A')}"
+            )
+
+            st.write(
+                f"**Rectifications Cleared:** "
+                f"{len(c_rects)} items."
+            )
+
+
+            # ==================================================
+            # QR
+            # ==================================================
+
+            direct_qr_url = (
+                f"{PUBLIC_DOMAIN}"
+                f"/?verify_job={record_id}"
+            )
+
+            st.write("---")
+
+            st.markdown(
+                "#### 📱 Digital Certificate QR Code:"
+            )
+
+            qr_bytes = generate_qr_png(
+                direct_qr_url
+            )
+
+            qr_col1, qr_col2 = st.columns(
+                [1,2]
+            )
+
+            with qr_col1:
+
+                st.image(
+                    qr_bytes,
+                    width=150,
+                    caption=(
+                        f"Scan to Verify "
+                        f"{c_job.get('job_id')}"
+                    )
+                )
+
+            with qr_col2:
+
+                st.info(
+                    "💡 Scan with any smartphone "
+                    "camera to open the "
+                    "digital certificate."
+                )
+
+                st.download_button(
+
+                    label=(
+                        "📥 Download QR Code "
+                        "(PNG)"
+                    ),
+
+                    data=qr_bytes,
+
+                    file_name=(
+                        f"TPL_"
+                        f"{c_job.get('job_id')}"
+                        f"_QR.png"
+                    ),
+
+                    mime="image/png",
+
+                    key=(
+                        f"qr_dl_"
+                        f"{record_id}_"
+                        f"{c_idx}"
+                    )
+                )
+
+
+            # ==================================================
+            # CERTIFICATE BUTTONS
+            # ==================================================
+
+            st.write("---")
+
+            btn_col1, btn_col2, btn_col3 = st.columns(
+                [1.2, 1.5, 1]
+            )
+
+
+            with btn_col1:
+
+                if st.button(
+                    "👁️ View Certificate",
+                    key=(
+                        f"view_"
+                        f"{record_id}_"
+                        f"{c_idx}"
+                    )
+                ):
+
+                    st.query_params[
+                        "verify_job"
+                    ] = record_id
+
+                    st.rerun()
+
+
+            with btn_col2:
+
+                pdf_bytes = create_pdf(
+                    c_job,
+                    direct_qr_url
+                )
+
+                st.download_button(
+
+                    label=(
+                        "📄 Print PDF Certificate"
+                    ),
+
+                    data=pdf_bytes,
+
+                    file_name=(
+                        f"TPL_"
+                        f"{c_job.get('job_id')}"
+                        f"_Certificate.pdf"
+                    ),
+
+                    mime="application/pdf",
+
+                    key=(
+                        f"dl_"
+                        f"{record_id}_"
+                        f"{c_idx}"
+                    )
+                )
+
+
+            with btn_col3:
+
+                if is_editor:
+
+                    comp_del_key = (
+                        f"completed_"
+                        f"{record_id}"
+                    )
+
+                    if st.button(
+                        "🗑️ Delete",
+                        key=(
+                            f"del_btn_"
+                            f"{record_id}_"
+                            f"{c_idx}"
+                        )
+                    ):
+
+                        st.session_state.delete_confirm_id = (
+                            comp_del_key
+                        )
+
+                        st.rerun()
+
+
+            # ==================================================
+            # DELETE COMPLETED
+            # ==================================================
+
+            if (
+                is_editor
+                and
+                st.session_state.delete_confirm_id
+                == f"completed_{record_id}"
+            ):
+
+                st.write("")
+
+                st.error(
+                    f"⚠️ Are you sure you want "
+                    f"to delete completed record "
+                    f"**{c_job.get('job_id')}**?"
+                )
+
+                conf_c1, conf_c2 = st.columns(
+                    2
+                )
+
+                with conf_c1:
+
+                    if st.button(
+                        "Yes, Delete Record",
+                        key=f"comp_yes_{record_id}"
+                    ):
+
+                        for r in c_job.get(
+                            "rectifications",
+                            []
+                        ):
+
+                            for p in (
+                                normalize_photo_list(
+                                    r.get(
+                                        "photos",
+                                        []
+                                    )
+                                )
+                                +
+                                normalize_photo_list(
+                                    r.get(
+                                        "fixed_photos",
+                                        []
+                                    )
+                                )
+                            ):
+
+                                delete_photo_url(p)
+
+
+                        for p in normalize_photo_list(
+                            c_job.get(
+                                "qc_final_approval_photos",
+                                []
+                            )
+                        ):
+
+                            delete_photo_url(p)
+
+
+                        if delete_job_record(
+                            record_id
+                        ):
+
+                            st.session_state.jobs_db = [
+                                j
+                                for j
+                                in st.session_state.jobs_db
+                                if j.get(
+                                    "record_id"
+                                )
+                                != record_id
+                            ]
+
+                            st.session_state.delete_confirm_id = (
+                                None
+                            )
+
+                            st.success(
+                                f"Job "
+                                f"{c_job.get('job_id')} "
+                                "permanently deleted!"
+                            )
+
+                            st.rerun()
+
+
+                with conf_c2:
+
+                    if st.button(
+                        "No, Cancel",
+                        key=f"comp_no_{record_id}"
+                    ):
+
+                        st.session_state.delete_confirm_id = (
+                            None
+                        )
+
+                        st.rerun()
